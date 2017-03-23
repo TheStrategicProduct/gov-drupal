@@ -50,7 +50,7 @@ if [ -d "/var/application/.git" ]; then
     cd /var/application
   
     # We aren't using ssh keys so we need to make github urls relative
-    sed -i.bak "s/git@github\.com\:/\.\.\/\.\.\//g" "$GIT_DIR/.gitmodules"
+    sed -i.bak "s/git@github\.com\:/\.\.\/\.\.\//g" "/var/application/.gitmodules"
 
     git --git-dir=/var/application/.git --work-tree=/var/application submodule update --init --recursive --remote
     git --git-dir=/var/application/.git --work-tree=/var/application submodule foreach -q --recursive 'git checkout $(git config -f $toplevel/.gitmodules submodule.$name.branch || echo master)'
@@ -72,7 +72,7 @@ else
         cd /var/application
 
         # We aren't using ssh keys so we need to make github urls relative
-        sed -i.bak "s/git@github\.com\:/\.\.\/\.\.\//g" "$GIT_DIR/.gitmodules"
+        sed -i.bak "s/git@github\.com\:/\.\.\/\.\.\//g" "/var/application/.gitmodules"
 
         git --git-dir=/var/application/.git --work-tree=/var/application submodule update --init --recursive --remote
         git --git-dir=/var/application/.git --work-tree=/var/application submodule foreach -q --recursive 'git checkout $(git config -f $toplevel/.gitmodules submodule.$name.branch || echo master)'
