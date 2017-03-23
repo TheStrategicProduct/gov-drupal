@@ -70,6 +70,7 @@ if [ -v GIT_URL ]; then
     echo "Updating submodules"
     # Unfortunately we have to CD to the working directory for this to work
     # there is a bug with submodule that --work-tree is ignored
+    echo "Changing directory from $OLDPWD to $GIT_DIR"
     cd $GIT_DIR
   
     # We aren't using ssh keys so we need to make github urls relative
@@ -77,6 +78,7 @@ if [ -v GIT_URL ]; then
 
     git --git-dir=$GIT_REPO --work-tree=$GIT_DIR submodule update --init --recursive --remote
     git --git-dir=$GIT_REPO --work-tree=$GIT_DIR submodule foreach -q --recursive 'git checkout $(git config -f $toplevel/.gitmodules submodule.$name.branch || echo master)'
+    echo "Changing directory from $GIT_DIR to $OLDPWD"
     cd $OLDPWD
   fi
 
