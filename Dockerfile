@@ -20,7 +20,7 @@ RUN yum -y update && \
 
 RUN yum -y install \
     curl \
-    git \
+    git2u \
     mariadb \
     msmtp \
     net-tools \
