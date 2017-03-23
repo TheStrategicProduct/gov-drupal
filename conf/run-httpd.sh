@@ -42,6 +42,20 @@ if [ -d "/var/application/.git" ]; then
     git --git-dir=/var/application/.git checkout master
     git --git-dir=/var/application/.git pull origin master
   fi
+  
+  if [ -f "/var/application/.gitmodules" ]; then 
+    echo "Updating submodules"
+    # Unfortunately we have to CD to the working directory for this to work
+    # there is a bug with submodule that --work-tree is ignored
+    cd /var/application
+  
+    # We aren't using ssh keys so we need to make github urls relative
+    sed -i.bak "s/git@github\.com\:/\.\.\/\.\.\//g" "$GIT_DIR/.gitmodules"
+
+    git --git-dir=/var/application/.git --work-tree=/var/application submodule update --init --recursive --remote
+    git --git-dir=/var/application/.git --work-tree=/var/application submodule foreach -q --recursive 'git checkout $(git config -f $toplevel/.gitmodules submodule.$name.branch || echo master)'
+    cd $OLDPWD
+  fi
 else
   if [ -v GIT_URL ]; then
     git clone $GIT_URL /var/application
@@ -50,6 +64,20 @@ else
         git --git-dir=/var/application/.git checkout $GIT_BRANCH
         git --git-dir=/var/application/.git pull origin $GIT_BRANCH
       fi
+  
+      if [ -f "/var/application/.gitmodules" ]; then
+        echo "Updating submodules"
+        # Unfortunately we have to CD to the working directory for this to work
+        # there is a bug with submodule that --work-tree is ignored
+        cd /var/application
+
+        # We aren't using ssh keys so we need to make github urls relative
+        sed -i.bak "s/git@github\.com\:/\.\.\/\.\.\//g" "$GIT_DIR/.gitmodules"
+
+        git --git-dir=/var/application/.git --work-tree=/var/application submodule update --init --recursive --remote
+        git --git-dir=/var/application/.git --work-tree=/var/application submodule foreach -q --recursive 'git checkout $(git config -f $toplevel/.gitmodules submodule.$name.branch || echo master)'
+        cd $OLDPWD
+     fi
     fi
   fi
 fi
